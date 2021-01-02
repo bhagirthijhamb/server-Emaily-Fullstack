@@ -1,6 +1,12 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const mongoose = require('mongoose');
 const keys = require('./../config/keys');
+
+// pull the model out of mongoose
+// User is now our model class that gives us a kind of handle to the underlying collection that exists inside of MongoDB
+// wec an use this model class to create new model instance  and persist to the DB 
+const User = mongoose.model('users');
 
 
 // inform passport library to use GoogleStrategy
@@ -16,6 +22,9 @@ passport.use(new GoogleStrategy({
   console.log('accessToken', accessToken);
   console.log('refresh token', refreshToken);
   console.log('profile', profile);
+  
+  // creates an instance of user and save it to the DB
+  new User({ googleId: profile.id }).save()
 }))
 
 // Client ID

@@ -1,8 +1,16 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const keys = require('./config/keys');
+
+// when the app first boots up, the configuration in User.js loads and mongoose will be informed  its responsible for creating a collection 'users'
+require('./models/User');
 // make sure the code inside passport.js is executed
 require('./services/passport');
+
 // authRoutes is a function that takes app object and attaches the routes to it( inside authRoutes.js)
 // const authRoutes = require('./routes/authRoutes');
+
+mongoose.connect(keys.mongoURI);
 
 const app = express();
 
