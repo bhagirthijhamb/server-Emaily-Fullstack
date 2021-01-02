@@ -14,5 +14,9 @@ module.exports = (app) => {
 
   // on redirect from Google, the url has the code in it(to be exchanged for information on profile and email)
   app.get('/auth/google/callback', passport.authenticate('google'))
+
+  app.get('/api/current_user', (req, res) => {
+    res.send(req.user);
+  })
 }
 

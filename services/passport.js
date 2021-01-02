@@ -8,6 +8,16 @@ const keys = require('./../config/keys');
 // wec an use this model class to create new model instance  and persist to the DB 
 const User = mongoose.model('users');
 
+passport.serializeUser((user, done) => {
+  done(null, user.id)
+})
+
+passport.deserializeUser((id, done) => {
+  User.findById(id)
+    .then(user => {
+      done(null, user);
+    })
+})
 
 // inform passport library to use GoogleStrategy
 // new GoogleStrategy() takes 2 things ClientID and ClientSecret (provided from Google's OAuth service)
@@ -19,12 +29,24 @@ passport.use(new GoogleStrategy({
 // }, (accessToken) => {
 //   console.log(accessToken);
 }, (accessToken, refreshToken, profile, done) => {
-  console.log('accessToken', accessToken);
-  console.log('refresh token', refreshToken);
-  console.log('profile', profile);
+  // console.log('accessToken', accessToken);
+  // console.log('refresh token', refreshToken);
+  // console.log('profile', profile);
+
+  User.findOne({ googleId: profile.id}).then((existingUser) => {
+    if(existingUser){
+      // we already have a record with the given profile id
+      done(null, existingUser)
+    } else {
+      // we dont have a user record with this IS, make a new record
+      // creates an instance of user and save it to the DB
+      new User({ googleId: profile.id })
+        .save()
+        .then(user => done(null, user));
+
+    }
+  })
   
-  // creates an instance of user and save it to the DB
-  new User({ googleId: profile.id }).save()
 }))
 
 // Client ID
