@@ -8,7 +8,9 @@ const keys = require('./../config/keys');
 // wec an use this model class to create new model instance  and persist to the DB 
 const User = mongoose.model('users');
 
+// user - model class instance created/fetched from the Db
 passport.serializeUser((user, done) => {
+  // user.id is the record _id in the DB(not the googleid)
   done(null, user.id)
 })
 

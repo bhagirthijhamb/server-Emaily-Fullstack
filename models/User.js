@@ -9,7 +9,8 @@ const userSchema = new Schema({
   googleId: String
 })
 
-// load user achema into mongoose by saying .model('users', userSchema)
+// load user schema into mongoose by saying .model('users', userSchema)
+// loading this model into mongose creates a model class
 mongoose.model('users', userSchema) // name of the collection - 'users'
 
 // we can pull a model out of mongoose by giving a single argument like
