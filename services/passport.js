@@ -31,26 +31,36 @@ passport.use(new GoogleStrategy({
   proxy: true
 // }, (accessToken) => {
 //   console.log(accessToken);
-}, (accessToken, refreshToken, profile, done) => {
-  // console.log('accessToken', accessToken);
-  // console.log('refresh token', refreshToken);
-  // console.log('profile', profile);
+}, 
+  // (accessToken, refreshToken, profile, done) => {
+  //   // console.log('accessToken', accessToken);
+  //   // console.log('refresh token', refreshToken);
+  //   // console.log('profile', profile);
 
-  User.findOne({ googleId: profile.id}).then((existingUser) => {
+  //     User.findOne({ googleId: profile.id}).then((existingUser) => {
+  //       if(existingUser){
+  //         // we already have a record with the given profile id
+  //         done(null, existingUser)
+  //       } else {
+  //         // we dont have a user record with this IS, make a new record
+  //         // creates an instance of user and save it to the DB
+  //         new User({ googleId: profile.id })
+  //           .save()
+  //           .then(user => done(null, user));
+
+  // }
+  async (accessToken, refreshToken, profile, done) => {
+    const existingUser = await User.findOne({ googleId: profile.id});
     if(existingUser){
-      // we already have a record with the given profile id
-      done(null, existingUser)
-    } else {
-      // we dont have a user record with this IS, make a new record
-      // creates an instance of user and save it to the DB
-      new User({ googleId: profile.id })
-        .save()
-        .then(user => done(null, user));
-
+      done(null, existingUser);
     }
-  })
-  
-}))
+    const user = await new User({ googleId: profile.id }).save();
+    done(null, user);
+  }
+//   })
+// }
+)
+)
 
 // Client ID
 // Public token -  we can share this with the public. Identifies our application to google servers.
