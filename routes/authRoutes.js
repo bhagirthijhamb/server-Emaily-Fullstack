@@ -13,7 +13,13 @@ module.exports = (app) => {
 
 
   // on redirect from Google, the url has the code in it(to be exchanged for information on profile and email)
-  app.get('/auth/google/callback', passport.authenticate('google'))
+  app.get(
+    '/auth/google/callback', 
+    passport.authenticate('google'),
+    (req, res) => {
+      res.redirect('/surveys')
+    }
+    )
 
   app.get('/api/logout', (req, res) => {
     // logout() is a function added to req object by passport
