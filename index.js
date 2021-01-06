@@ -6,6 +6,7 @@ const keys = require('./config/keys');
 
 // when the app first boots up, the configuration in User.js loads and mongoose will be informed  its responsible for creating a collection 'users'
 require('./models/User');
+require('./models/Survey');
 // make sure the code inside passport.js is executed
 require('./services/passport');
 
