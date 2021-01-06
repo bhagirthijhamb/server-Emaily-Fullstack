@@ -14,8 +14,12 @@ require('./services/passport');
 
 mongoose.connect(keys.mongoURI);
 
+// app object is used to set up configuration that will listen to incoming requests that are being routed to Express side of the app from the Node side and route those requests to different route handlers
+// All the route handlers to be written later will be registered with this app object.
 const app = express();
 
+// used to parse JSON bodies
+app.use(express.json()); 
 app.use(
   cookieSession({
     maxAge: 30 * 24 * 60 * 60 * 1000,
@@ -32,6 +36,7 @@ app.use(passport.session())
 // OR 
 // require() statement returns a function that is immediately called with app object
 require('./routes/authRoutes')(app);
+require('./routes/billingRoutes')(app);
 
 // Dynamic port binding
 const PORT = process.env.PORT || 5000
