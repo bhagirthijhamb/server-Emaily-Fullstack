@@ -1,4 +1,7 @@
 const mongoose = require('mongoose');
+const _ = require('lodash');
+const { Path } = require('path-parser');
+const { URL } = require('url');
 const requireLogin = require('../middlewares/requireLogin');
 const requireCredits = require('../middlewares/requireCredits');
 const Mailer = require('./../services/Mailer');
@@ -12,8 +15,51 @@ module.exports = app => {
   })
 
   app.post('/api/surveys/webhooks', (req, res) => {
-    console.log(req.body);
-    res.send({})
+    // console.log(req.body);
+    // res.send({})
+    const p = new Path('/api/surveys/:surveyId/:choice');
+
+    // const events = _.map(req.body, (event) => {
+    //   // const pathname = new URL(event.url).pathname;
+    //   // console.log(p.test(pathname));
+    //   // const match = p.test(pathname);
+    //   const match = p.test(new URL(event.url).pathname);
+    //   if(match){
+    //     // return match;
+    //     return { email: event.email, surveyId: match.surveyId, choice: match.choice };
+    //   }
+    // })
+    // // console.log(events)
+    // const compactEvents = _.compact(events);
+    // const uniqueEvents = _.uniqBy(compactEvents, 'email', 'surveyId');
+    // console.log(uniqueEvents);
+    // res.send({});
+
+    // const events = _.chain(req.body)
+    _.chain(req.body)
+      .map(({ email, url }) => {
+        const match = p.test(new URL(url).pathname);
+        if(match){
+          return { email, surveyId: match.surveyId, choice: match.choice };
+        }
+      })
+      .compact()
+      .uniqBy('email', 'surveyId')
+      .each(({ surveyId, email, choice }) => {
+        Survey.updateOne({
+          _id: surveyId,
+          recipients: {
+            $elemMatch: { email: email, responded: false }
+          }
+        }, {
+          $inc: { [choice]: 1},
+          $set: { 'recipients.$.responded': true }
+        }).exec();
+      })
+      .value();
+
+      // console.log(events);
+      res.send({});
   })
 
   app.post('/api/surveys', requireLogin, requireCredits, async (req, res) => {
