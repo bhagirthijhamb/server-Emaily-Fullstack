@@ -6,7 +6,7 @@ module.exports = (app) => {
   //   res.send({ bye: 'buddy' });
   // })
 
-  // when user come to this route, take it to the OAuth flow via passport
+  // when user come to this route, take it to the OAuth flow via passport (entirely managed by passport)
   app.get('/auth/google', passport.authenticate('google', {
     scope: ['profile', 'email']
   }))

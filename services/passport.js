@@ -29,9 +29,11 @@ passport.use(new GoogleStrategy({
   clientSecret: keys.googleClientSecret,
   callbackURL: '/auth/google/callback',
   proxy: true
-// }, (accessToken) => {
-//   console.log(accessToken);
 }, 
+// callback function (an arrow function as second arg to new GoogleStrategy)
+// (accessToken) => {
+//   console.log(accessToken);
+// }, 
   // (accessToken, refreshToken, profile, done) => {
   //   // console.log('accessToken', accessToken);
   //   // console.log('refresh token', refreshToken);
@@ -49,6 +51,7 @@ passport.use(new GoogleStrategy({
   //           .then(user => done(null, user));
 
   // }
+  
   async (accessToken, refreshToken, profile, done) => {
     const existingUser = await User.findOne({ googleId: profile.id});
     if(existingUser){
